@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tuisyen Disember 2026</title>
+<style>
+:root{
+  --bg:#f7f6f2; --surface:#ffffff; --ink:#1d1f23; --muted:#5d636d; --line:#e2e0d8;
+  --school:#e7eefc; --school-ink:#1f3d7a;
+  --break:#f6c86b; --break-ink:#5a3d00;
+  --weekend:#efede6; --weekend-ink:#9a9a92;
+  --accent:#1f3d7a; --today:#d6336c;
+  --study:#dcf1e3; --study-ink:#14532d;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#15171b; --surface:#1d2026; --ink:#e9eaee; --muted:#a2a8b3; --line:#2e323a;
+    --school:#22314f; --school-ink:#c9d8ff;
+    --break:#b8892c; --break-ink:#1a1200;
+    --weekend:#23262c; --weekend-ink:#6b7079;
+    --accent:#9db8ff; --today:#ff6b9a;
+    --study:#1f3f2c; --study-ink:#bfe8cc;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#15171b; --surface:#1d2026; --ink:#e9eaee; --muted:#a2a8b3; --line:#2e323a;
+  --school:#22314f; --school-ink:#c9d8ff;
+  --break:#b8892c; --break-ink:#1a1200;
+  --weekend:#23262c; --weekend-ink:#6b7079;
+  --accent:#9db8ff; --today:#ff6b9a;
+  --study:#1f3f2c; --study-ink:#bfe8cc;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font:clamp(14px,.55vw + 11px,17px)/1.5 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+.wrap{width:100%;margin:0;padding:clamp(16px,2.5vw,40px) clamp(12px,3vw,48px) clamp(32px,4vw,64px)}
+header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin-bottom:18px}
+header h1{margin:0;font-size:clamp(1.5rem,4vw,2.1rem);letter-spacing:-.01em}
+section{background:var(--surface);border:2px solid var(--accent);border-radius:14px;padding:clamp(12px,1.8vw,24px);min-width:0}
+.muted{color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:.84rem;color:var(--muted);margin-bottom:14px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:14px;height:14px;border-radius:4px;display:inline-block;border:1px solid var(--line)}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:clamp(3px,.5vw,8px)}
+.cal .dow{font-size:.75rem;color:var(--muted);text-align:center;font-weight:600;padding-bottom:2px}
+.cell{min-height:clamp(72px,7vw,120px);border-radius:9px;padding:clamp(4px,.6vw,10px) clamp(6px,.8vw,12px);display:flex;flex-direction:column;gap:3px;min-width:0;overflow-wrap:anywhere}
+.cell .n{font-weight:700;font-size:.95rem}
+.cell .t{font-size:.78rem;line-height:1.3}
+.cell .f{font-size:.72rem;opacity:.85}
+.cell.s{background:var(--school);color:var(--school-ink)}
+.cell.k{background:var(--study);color:var(--study-ink)}
+.cell.b{background:var(--break);color:var(--break-ink)}
+.cell.r{background:var(--weekend);color:var(--weekend-ink)}
+.cell.today{outline:2px solid var(--today);outline-offset:1px}
+.cell .dw{display:none}
+@media (max-width:700px){
+  .cal{grid-template-columns:1fr;gap:4px}
+  .cal .dow,.cal .pad{display:none}
+  .cell{min-height:0;flex-direction:row;flex-wrap:wrap;align-items:baseline;gap:4px 10px}
+  .cell .n{min-width:64px}
+  .cell .dw{display:inline;font-weight:400;opacity:.75}
+}
+.cost{margin-top:20px;border-top:1px solid var(--line);padding-top:16px}
+.cost h3{margin:0 0 10px;font-size:1rem}
+.cost-in{display:flex;flex-wrap:wrap;gap:10px 22px;margin-bottom:10px;font-size:.9rem}
+.cost input{font:inherit;width:84px;padding:5px 8px;border:1px solid var(--line);border-radius:7px;background:var(--bg);color:var(--ink);margin-left:6px;text-align:right}
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.92rem}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.76rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:600}
+td.num{text-align:right;font-variant-numeric:tabular-nums}
+tr.tot td{font-weight:700;font-size:1.05rem;border-bottom:0}
+.print{border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;padding:7px 14px;border-radius:9px;cursor:pointer}
+@media print{
+  body{background:#fff}
+  .print{display:none}
+  section{border-color:#ccc}
+  .cell.today{outline:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Tuisyen Disember 2026</h1>
+    <button type="button" class="print" onclick="window.print()">Cetak / Print</button>
+  </header>
+  <section>
+    <p class="muted" style="margin:0 0 12px">Sekolah akhir: Khamis 3 Dis · Cuti akhir persekolahan: 4–31 Dis · Matematik Tambahan 2 jam setiap kelas</p>
+    <div class="legend">
+      <span><i class="sw" style="background:var(--school)"></i>Sekolah</span>
+      <span><i class="sw" style="background:var(--study)"></i>Kelas tuisyen</span>
+      <span><i class="sw" style="background:var(--break)"></i>Cuti sekolah</span>
+      <span><i class="sw" style="background:var(--weekend)"></i>Hujung minggu</span>
+    </div>
+    <div class="cal" id="grid"></div>
+
+    <div class="cost">
+      <h3>Anggaran kos tuisyen Disember 2026</h3>
+      <div class="cost-in">
+        <label>Jam setiap kelas <input type="number" id="hrs" min="0" step="0.5" value="2"></label>
+        <label>Kos lain (buku, kalkulator, daftar) RM <input type="number" id="extra" min="0" step="1" value="0"></label>
+      </div>
+      <div class="tbl-wrap"><table id="costTable"></table></div>
+      <p class="muted" style="font-size:.82rem;margin:8px 0 0">Kadar RM/jam ialah anggaran — tukar mengikut kadar tutor / pusat tuisyen sebenar. Nilai disimpan dalam pelayar ini.</p>
+    </div>
+  </section>
+</div>
+
+<script>
+(function(){
+  var Y=2026, M=11;
+  var LAST_SCHOOL=3;                 // sekolah hingga Khamis 3 Dis
+  var WEEKEND=[5,6];                 // Kedah: Jumaat & Sabtu
+  var FEST={25:"Krismas"};
+  // Kelas tuisyen: hari: ["Subjek", ...]
+  var CLASSES={7:["Matematik Tambahan"],8:["Matematik Tambahan"],14:["Matematik Tambahan"],15:["Matematik Tambahan"]};
+  var DEFRATE={"Matematik Tambahan":100}; // RM200 / 2 jam
+  var HARI=["Ahd","Isn","Sel","Rab","Kha","Jum","Sab"];
+  var KEY="tuisyen-dis-2026";
+
+  function $(id){return document.getElementById(id);}
+  function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+  function money(v){return v.toLocaleString("ms-MY",{minimumFractionDigits:2,maximumFractionDigits:2});}
+  var now=new Date(), isToday=function(d){return now.getFullYear()===Y&&now.getMonth()===M&&now.getDate()===d;};
+
+  // calendar
+  var subj={}, order=[];
+  var g=""; HARI.forEach(function(x){g+='<div class="dow">'+x+'</div>';});
+  for(var e=0;e<new Date(Y,M,1).getDay();e++) g+='<div class="pad"></div>';
+  for(var d=1;d<=31;d++){
+    var dow=new Date(Y,M,d).getDay(), css, body;
+    if(d>LAST_SCHOOL){css="b";body="Cuti";}
+    else if(WEEKEND.indexOf(dow)>=0){css="r";body="Hujung minggu";}
+    else {css="s";body="Sekolah";}
+    body='<span class="t">'+body+'</span>';
+    if(CLASSES[d]){
+      css="k";
+      body=CLASSES[d].map(function(x){ if(!subj[x]){subj[x]=0;order.push(x);} subj[x]++; return '<span class="t">'+esc(x)+'</span>'; }).join("");
+    }
+    if(FEST[d]) body+='<span class="f">'+esc(FEST[d])+'</span>';
+    g+='<div class="cell '+css+(isToday(d)?" today":"")+'"><span class="n">'+d+' <span class="dw">'+HARI[dow]+'</span></span>'+body+'</div>';
+  }
+  $("grid").innerHTML=g;
+
+  // cost
+  var store=null;
+  try{ store=JSON.parse(localStorage.getItem(KEY)||"null") || JSON.parse(localStorage.getItem("takwim2026-cost-v2")||"null"); }catch(err){}
+  store=store||{}; var rates=store.rates||{};
+  if(store.hrs!=null) $("hrs").value=store.hrs;
+  if(store.extra!=null) $("extra").value=store.extra;
+
+  var ch='<thead><tr><th>Subjek</th><th class="num">Kelas</th><th class="num">Jam</th><th class="num">RM/jam</th><th class="num">Jumlah (RM)</th></tr></thead><tbody>';
+  order.forEach(function(nm,i){
+    ch+='<tr><td>'+esc(nm)+'</td><td class="num">'+subj[nm]+'</td><td class="num" data-h="'+i+'"></td>'+
+        '<td class="num"><input type="number" min="0" step="1" data-r="'+i+'" value="'+(rates[nm]!=null?rates[nm]:(DEFRATE[nm]||40))+'"></td>'+
+        '<td class="num" data-s="'+i+'"></td></tr>';
+  });
+  ch+='<tr><td>Kos lain</td><td></td><td></td><td></td><td class="num" id="cExtra"></td></tr>';
+  ch+='<tr class="tot"><td>Jumlah keseluruhan</td><td class="num" id="cDays"></td><td class="num" id="cHrs"></td><td></td><td class="num" id="cTotal"></td></tr></tbody>';
+  var ct=$("costTable"); ct.innerHTML=ch;
+
+  function calc(){
+    var hrs=Math.max(0,parseFloat($("hrs").value)||0);
+    var extra=Math.max(0,parseFloat($("extra").value)||0);
+    var tot=0, td=0, th=0;
+    order.forEach(function(nm,i){
+      var r=Math.max(0,parseFloat(ct.querySelector('[data-r="'+i+'"]').value)||0); rates[nm]=r;
+      var h=subj[nm]*hrs, sub=h*r; tot+=sub; td+=subj[nm]; th+=h;
+      ct.querySelector('[data-h="'+i+'"]').textContent=h;
+      ct.querySelector('[data-s="'+i+'"]').textContent=money(sub);
+    });
+    $("cExtra").textContent=money(extra);
+    $("cDays").textContent=td;
+    $("cHrs").textContent=th;
+    $("cTotal").textContent="RM "+money(tot+extra);
+    try{ localStorage.setItem(KEY,JSON.stringify({hrs:hrs,extra:extra,rates:rates})); }catch(err){}
+  }
+  document.querySelector(".cost").addEventListener("input",calc);
+  calc();
+})();
+</script>
+</body>
+</html>
