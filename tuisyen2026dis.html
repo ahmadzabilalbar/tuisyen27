@@ -79,12 +79,14 @@ section h2{margin:0 0 12px;font-size:1.1rem}
 .cell.r{background:var(--weekend);color:var(--weekend-ink)}
 .cell.today{outline:2px solid var(--today);outline-offset:1px}
 .cell .dw{display:none}
+.cell .short{display:none}
 @media (max-width:700px){
-  .cal{grid-template-columns:1fr;gap:4px}
-  .cal .dow,.cal .pad{display:none}
-  .cell{min-height:0;flex-direction:row;flex-wrap:wrap;align-items:baseline;gap:4px 10px}
-  .cell .n{min-width:64px}
-  .cell .dw{display:inline;font-weight:400;opacity:.75}
+  .cal{gap:3px}
+  .cal .dow{font-size:.68rem}
+  .cell{min-height:54px;padding:5px 2px;border-radius:7px;gap:2px;align-items:center;text-align:center}
+  .cell .n{font-size:.85rem}
+  .cell .f,.cell .lbl,.cell .full{display:none}
+  .cell .short{display:block;font-size:.6rem;line-height:1.15;font-weight:700}
 }
 .cost{margin-top:20px;border-top:1px solid var(--line);padding-top:16px}
 .cost h3{margin:0 0 10px;font-size:1rem}
@@ -173,6 +175,7 @@ tr.tot td{border-top:2px solid var(--line)}
   var FEST={25:"Krismas"};
   // Kelas tuisyen: hari: ["Subjek", ...]
   var CLASSES={5:["Kimia"],7:["Matematik Tambahan"],8:["Matematik Tambahan"],12:["Kimia"],14:["Matematik Tambahan"],15:["Matematik Tambahan"],19:["Kimia"],26:["Kimia"]};
+  var SHORT={"Matematik Tambahan":"Add Math","Kimia":"Kimia"};
   var TIME={"Matematik Tambahan":"9.00 – 10.30 pg","Kimia":"11.30 pg – 1.00 ptg"};
   var TEACHER={"Matematik Tambahan":"Cikgu Wan Suhaimi","Kimia":"Sir Thana"};
   // Yuran asal: mode class = RM sekelas, hour = RM sejam, month = RM seorang sebulan; hrs = jam sekelas
@@ -206,12 +209,12 @@ tr.tot td{border-top:2px solid var(--line)}
     if(d>LAST_SCHOOL){css="b";body="Cuti Sekolah";}
     else if(WEEKEND.indexOf(dow)>=0){css="r";body="Hujung minggu";}
     else {css="s";body="Sekolah";}
-    body='<span class="t">'+body+'</span>';
+    body='<span class="t lbl">'+body+'</span>';
     if(CLASSES[d]){
       css="k";
-      body=CLASSES[d].map(function(x){ if(!subj[x]){subj[x]=0;order.push(x);} subj[x]++; return '<span class="t">'+esc(x)+'</span>'+(TEACHER[x]?'<span class="f">'+esc(TEACHER[x])+'</span>':'')+(TIME[x]?'<span class="f">'+esc(TIME[x])+'</span>':''); }).join("");
+      body=CLASSES[d].map(function(x){ if(!subj[x]){subj[x]=0;order.push(x);} subj[x]++; return '<span class="t full">'+esc(x)+'</span><span class="short">'+esc(SHORT[x]||x)+'</span>'+(TEACHER[x]?'<span class="f">'+esc(TEACHER[x])+'</span>':'')+(TIME[x]?'<span class="f">'+esc(TIME[x])+'</span>':''); }).join("");
     }
-    if(FEST[d]){ css=css==="k"?"k hol":"ph"; if(css==="ph") body='<span class="t">Cuti Umum</span>'; body+='<span class="f">'+esc(FEST[d])+'</span>'; }
+    if(FEST[d]){ css=css==="k"?"k hol":"ph"; if(css==="ph") body='<span class="t lbl">Cuti Umum</span>'; body+='<span class="f">'+esc(FEST[d])+'</span>'; }
     g+='<div class="cell '+css+(isToday(d)?" today":"")+'"><span class="n">'+d+' <span class="dw">'+HARI[dow]+'</span></span>'+body+'</div>';
   }
   $("grid").innerHTML=g;
