@@ -125,7 +125,7 @@ tr.tot td{border-top:2px solid var(--line)}
       <span><i class="sw" style="background:var(--school)"></i>Sekolah</span>
       <span><i class="sw" style="background:var(--study)"></i>Kelas tuisyen</span>
       <span><i class="sw" style="background:var(--break)"></i>Cuti sekolah</span>
-      <span><i class="sw" style="background:var(--ph)"></i>Cuti umum</span>
+      <span><i class="sw" style="background:var(--ph)"></i>Cuti Umum</span>
     </div>
     <div class="cal" id="grid"></div>
 
@@ -214,7 +214,7 @@ tr.tot td{border-top:2px solid var(--line)}
       css="k";
       body=CLASSES[d].map(function(x){ if(!subj[x]){subj[x]=0;order.push(x);} subj[x]++; return '<span class="t">'+esc(x)+'</span>'+(TEACHER[x]?'<span class="f">'+esc(TEACHER[x])+'</span>':'')+(TIME[x]?'<span class="f">'+esc(TIME[x])+'</span>':''); }).join("");
     }
-    if(FEST[d]){ css=css==="k"?"k hol":"ph"; if(css==="ph") body='<span class="t">Cuti umum</span>'; body+='<span class="f">'+esc(FEST[d])+'</span>'; }
+    if(FEST[d]){ css=css==="k"?"k hol":"ph"; if(css==="ph") body='<span class="t">Cuti Umum</span>'; body+='<span class="f">'+esc(FEST[d])+'</span>'; }
     g+='<div class="cell '+css+(isToday(d)?" today":"")+'"><span class="n">'+d+' <span class="dw">'+HARI[dow]+'</span></span>'+body+'</div>';
   }
   $("grid").innerHTML=g;
