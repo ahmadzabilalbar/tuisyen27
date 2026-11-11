@@ -137,7 +137,7 @@ tr.tot td{border-top:2px solid var(--line)}
         <label>Kos lain (buku, daftar) RM <input type="number" id="extra" min="0" step="1" value="0"></label>
       </div>
       <div class="tbl-wrap"><table id="costTable"></table></div>
-      <p class="muted" style="font-size:.82rem;margin:8px 0 0">Yuran seorang sekelas = yuran kelas ÷ bilangan pelajar. Matematik Tambahan RM200 untuk 4 sesi (dikongsi semua pelajar). Kimia RM50 seorang untuk 4 kelas. Bilangan pelajar asal ikut senarai pelajar di bawah. Nilai yang ditukar disimpan dalam pelayar ini.</p>
+      <p class="muted" style="font-size:.82rem;margin:8px 0 0">Yuran seorang sekelas = yuran kelas ÷ bilangan pelajar. Matematik Tambahan RM100 sesi (90 min), dibahagi bilangan pelajar. Kimia RM50 seorang untuk 4 kelas. Bilangan pelajar asal ikut senarai pelajar di bawah. Nilai yang ditukar disimpan dalam pelayar ini.</p>
     </div>
   </section>
   <section class="students">
@@ -179,9 +179,9 @@ tr.tot td{border-top:2px solid var(--line)}
   var TIME={"Matematik Tambahan":"9.00 – 10.30 pg","Kimia":"11.30 pg – 1.00 ptg"};
   var TEACHER={"Matematik Tambahan":"Cikgu Wan Suhaimi","Kimia":"Sir Thana"};
   // Yuran asal: mode class = RM sekelas, hour = RM sejam, month = RM seorang sebulan; hrs = jam sekelas
-  var FEES={"Matematik Tambahan":{mode:"class",val:50,hrs:1.5},"Kimia":{mode:"month",val:50,hrs:1.5}};
+  var FEES={"Matematik Tambahan":{mode:"class",val:100,hrs:1.5},"Kimia":{mode:"month",val:50,hrs:1.5}};
   var HARI=["Ahd","Isn","Sel","Rab","Kha","Jum","Sab"];
-  var KEY="tuisyen-dis-2026-v5";
+  var KEY="tuisyen-dis-2026-v6";
 
   function $(id){return document.getElementById(id);}
   function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
