@@ -138,8 +138,9 @@ tr.tot td{border-top:2px solid var(--line)}
     </div>
   </section>
   <section class="students">
-    <h2>Senarai pelajar (20 orang)</h2>
+    <h2>Senarai pelajar (21 orang)</h2>
     <ol>
+      <li>Abdul Mu'izz</li>
       <li>Abdul Mustaqim Uzair</li>
       <li>Aiman Qawariezmi</li>
       <li>Aiman Zaffran</li>
@@ -177,7 +178,7 @@ tr.tot td{border-top:2px solid var(--line)}
   // Yuran asal: mode class = RM sekelas, hour = RM sejam, month = RM seorang sebulan; hrs = jam sekelas
   var FEES={"Matematik Tambahan":{mode:"class",val:200,hrs:2},"Kimia":{mode:"month",val:50,hrs:1.5}};
   var HARI=["Ahd","Isn","Sel","Rab","Kha","Jum","Sab"];
-  var KEY="tuisyen-dis-2026-v3";
+  var KEY="tuisyen-dis-2026-v4";
 
   function $(id){return document.getElementById(id);}
   function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
@@ -272,7 +273,7 @@ tr.tot td{border-top:2px solid var(--line)}
     $("cExtra").textContent=money(extra);
     $("cDays").textContent=td;
     $("cTotal").textContent="RM "+money(tot+extra);
-    store.students=students; store.extra=extra;
+    store.students=students===DEF_STUDENTS?null:students; store.extra=extra;
     lsSet(KEY,JSON.stringify(store));
   }
   document.querySelector(".cost").addEventListener("input",calc);
