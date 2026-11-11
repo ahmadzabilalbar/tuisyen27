@@ -237,7 +237,7 @@ tr.tot td{border-top:2px solid var(--line)}
         '<td class="num">'+(h!=null?n*h+'<br><span class="muted" style="font-size:.8rem">'+h+' jam/kelas</span>':'–')+'</td>'+
         '<td>'+(f?MODE_LABEL[f.mode]:'–')+'</td>'+
         '<td class="num">'+(f?money(f.val)+'<br><span class="muted" style="font-size:.75rem">'+UNIT[f.mode]+'</span>':'–')+'</td>'+
-        '<td class="num">'+(fee==null?'–':money(fee))+'</td>'+
+        '<td class="num">'+(fee==null||f.mode==="month"?'–':money(fee))+'</td>'+   // yuran seorang: tiada yuran kelas sebenar
         '<td class="num">'+(per==null?'–':money(per))+'</td>'+
         '<td class="num">'+(per==null||!h?'–':money(per/h))+'</td>'+
         '<td class="num">'+(per==null?'–':money(per*n))+'</td></tr>';
