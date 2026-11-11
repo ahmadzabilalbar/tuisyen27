@@ -114,7 +114,8 @@ tr.tot td{font-weight:700;font-size:1.05rem;border-bottom:0}
     </div>
   </header>
   <section>
-    <p class="muted" style="margin:0 0 12px">Sekolah akhir: Khamis 3 Dis · Cuti akhir persekolahan: 4–31 Dis · Matematik Tambahan 2 jam setiap kelas</p>
+    <p class="muted" style="margin:0 0 12px">Sekolah akhir: Khamis 3 Dis · Cuti akhir persekolahan: 4–31 Dis · Kelas online, 2 jam setiap kelas</p>
+    <p style="margin:0 0 12px"><b>Matematik Tambahan</b> — Cikgu Wan Suhaimi · <b>Kimia</b> — Sir Thana</p>
     <div class="legend">
       <span><i class="sw" style="background:var(--school)"></i>Sekolah</span>
       <span><i class="sw" style="background:var(--study)"></i>Kelas tuisyen</span>
@@ -168,6 +169,7 @@ tr.tot td{font-weight:700;font-size:1.05rem;border-bottom:0}
   var FEST={25:"Krismas"};
   // Kelas tuisyen: hari: ["Subjek", ...]
   var CLASSES={7:["Matematik Tambahan"],8:["Matematik Tambahan"],14:["Matematik Tambahan"],15:["Matematik Tambahan"]};
+  var TEACHER={"Matematik Tambahan":"Cikgu Wan Suhaimi","Kimia":"Sir Thana"};
   var DEFRATE={"Matematik Tambahan":100}; // RM200 / 2 jam
   var HARI=["Ahd","Isn","Sel","Rab","Kha","Jum","Sab"];
   var KEY="tuisyen-dis-2026";
@@ -202,7 +204,7 @@ tr.tot td{font-weight:700;font-size:1.05rem;border-bottom:0}
     body='<span class="t">'+body+'</span>';
     if(CLASSES[d]){
       css="k";
-      body=CLASSES[d].map(function(x){ if(!subj[x]){subj[x]=0;order.push(x);} subj[x]++; return '<span class="t">'+esc(x)+'</span>'; }).join("");
+      body=CLASSES[d].map(function(x){ if(!subj[x]){subj[x]=0;order.push(x);} subj[x]++; return '<span class="t">'+esc(x)+'</span>'+(TEACHER[x]?'<span class="f">'+esc(TEACHER[x])+'</span>':''); }).join("");
     }
     if(FEST[d]) body+='<span class="f">'+esc(FEST[d])+'</span>';
     g+='<div class="cell '+css+(isToday(d)?" today":"")+'"><span class="n">'+d+' <span class="dw">'+HARI[dow]+'</span></span>'+body+'</div>';
@@ -218,7 +220,7 @@ tr.tot td{font-weight:700;font-size:1.05rem;border-bottom:0}
 
   var ch='<thead><tr><th>Subjek</th><th class="num">Kelas</th><th class="num">Jam</th><th class="num">RM/jam</th><th class="num">Jumlah (RM)</th></tr></thead><tbody>';
   order.forEach(function(nm,i){
-    ch+='<tr><td>'+esc(nm)+'</td><td class="num">'+subj[nm]+'</td><td class="num" data-h="'+i+'"></td>'+
+    ch+='<tr><td>'+esc(nm)+(TEACHER[nm]?'<div class="muted" style="font-size:.82rem">'+esc(TEACHER[nm])+'</div>':'')+'</td><td class="num">'+subj[nm]+'</td><td class="num" data-h="'+i+'"></td>'+
         '<td class="num"><input type="number" min="0" step="1" data-r="'+i+'" value="'+(rates[nm]!=null?rates[nm]:(DEFRATE[nm]||40))+'"></td>'+
         '<td class="num" data-s="'+i+'"></td></tr>';
   });
