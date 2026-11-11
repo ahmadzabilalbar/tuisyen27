@@ -1,4 +1,4 @@
-// Data rasmi tuisyen 2027 — dijana oleh mod admin (?admin) → Eksport settings.js
+// Data rasmi tuisyen — diterbitkan dari mod admin (?admin) pada 2026-11-11 13:24 (MYT)
 window.TUISYEN_SETTINGS = {
   "schedule": {
     "Biologi": {
@@ -7,7 +7,7 @@ window.TUISYEN_SETTINGS = {
       "freq": "month",
       "off": 0,
       "hrs": null,
-      "teacher": ""
+      "teacher": "Belum Ada"
     },
     "Matematik Tambahan": {
       "day": 5,
@@ -15,7 +15,7 @@ window.TUISYEN_SETTINGS = {
       "freq": "week",
       "off": 0,
       "hrs": 2,
-      "teacher": ""
+      "teacher": "Cikgu Wan Suhaimi"
     },
     "Kimia": {
       "day": 6,
@@ -23,7 +23,7 @@ window.TUISYEN_SETTINGS = {
       "freq": "alt",
       "off": 0,
       "hrs": 2,
-      "teacher": ""
+      "teacher": "Sir Thana"
     },
     "Fizik": {
       "day": 6,
@@ -31,7 +31,7 @@ window.TUISYEN_SETTINGS = {
       "freq": "alt",
       "off": 1,
       "hrs": null,
-      "teacher": ""
+      "teacher": "Belum Ada"
     }
   },
   "cost": {
@@ -41,8 +41,14 @@ window.TUISYEN_SETTINGS = {
       "Kimia": 200,
       "Fizik": null
     },
-    "mode": {},
-    "rates": {},
+    "mode": {
+      "Biologi": "hour",
+      "Fizik": "hour"
+    },
+    "rates": {
+      "Biologi": 100,
+      "Fizik": 100
+    },
     "students": 25,
     "extra": 0
   }
