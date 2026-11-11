@@ -57,6 +57,11 @@ header h1{margin:0;font-size:clamp(1.5rem,4vw,2.1rem);letter-spacing:-.01em}
 .icon-btn .chev{transition:transform .15s}
 .icon-btn[aria-expanded="false"] .chev{transform:rotate(-90deg)}
 @media print{ .icon-btn{display:none} }
+.nav-link{display:inline-flex;align-items:center;height:36px;padding:0 12px;border:1px solid var(--line);border-radius:9px;
+  background:var(--surface);color:var(--ink);text-decoration:none;font-size:.9rem;white-space:nowrap}
+.nav-link:hover{background:var(--bg)}
+.nav-link:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media print{ .nav-link{display:none} }
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(170px,100%),1fr));gap:clamp(8px,1.2vw,16px);margin-bottom:22px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
 .card .k{font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
@@ -242,6 +247,7 @@ details.full>summary{cursor:pointer;font-weight:700;padding:12px 16px;background
   <header>
     <h1>Perancangan Tuisyen 2027</h1>
     <div class="head-btns">
+      <a class="nav-link" href="/tuisyen2026dis.html" title="Jadual tuisyen Disember 2026">Disember 2026</a>
       <button type="button" class="icon-btn" id="themeBtn" aria-label="Tukar tema" title="Tukar tema"></button>
       <button type="button" class="icon-btn" onclick="window.print()" aria-label="Cetak" title="Cetak / Print"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M6 14h12v7H6z"/></svg></button>
     </div>
