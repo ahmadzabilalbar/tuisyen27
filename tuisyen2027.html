@@ -250,6 +250,7 @@ details.full>summary{cursor:pointer;font-weight:700;padding:12px 16px;background
         <div class="sub-head">
           <h3 class="sum-h3">Tetapan jadual</h3>
           <div class="sub-btns">
+            <button type="button" class="icon-btn copy-btn" data-copy="ed" aria-label="Salin ke papan klip" title="Salin ke papan klip (teks ringkas)"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></button>
             <button type="button" class="icon-btn" id="edReset" aria-label="Set semula" title="Set semula jadual"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg></button>
             <button type="button" class="icon-btn sec-toggle" aria-expanded="true" aria-label="Sembunyi" title="Sembunyi"><svg class="ic chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
           </div>
@@ -282,7 +283,7 @@ details.full>summary{cursor:pointer;font-weight:700;padding:12px 16px;background
       <div class="sub" data-sec="month">
         <div class="sub-head">
           <h3 class="sum-h3">Yuran mengikut bulan (seorang pelajar)</h3>
-          <div class="sub-btns"><button type="button" class="icon-btn sec-toggle" aria-expanded="true" aria-label="Sembunyi" title="Sembunyi"><svg class="ic chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button></div>
+          <div class="sub-btns"><button type="button" class="icon-btn copy-btn" data-copy="month" aria-label="Salin ke papan klip" title="Salin ke papan klip (teks ringkas)"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></button><button type="button" class="icon-btn sec-toggle" aria-expanded="true" aria-label="Sembunyi" title="Sembunyi"><svg class="ic chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button></div>
         </div>
         <div class="sub-body">
           <div class="tbl-wrap"><table class="sum-tbl" id="sumTable"></table></div>
@@ -726,6 +727,27 @@ details.full>summary{cursor:pointer;font-weight:700;padding:12px 16px;background
     lsSet("tuisyen-cost-"+Y,JSON.stringify(store));
   }
 
+  var copyTexts={month:"",ed:""};
+  function copyText(txt,done){
+    function fallback(){
+      var ta=document.createElement("textarea"); ta.value=txt; ta.setAttribute("readonly","");
+      ta.style.position="fixed"; ta.style.opacity="0"; document.body.appendChild(ta); ta.select();
+      var ok=false; try{ ok=document.execCommand("copy"); }catch(e){}
+      document.body.removeChild(ta); done(ok);
+    }
+    if(navigator.clipboard&&window.isSecureContext) navigator.clipboard.writeText(txt).then(function(){done(true);},fallback);
+    else fallback();
+  }
+  [].forEach.call(document.querySelectorAll(".copy-btn"),function(btn){ btn.addEventListener("click",function(){
+    var b=this, html=b.innerHTML, t0=b.title;
+    if(b.disabled) return; b.disabled=true;
+    copyText(copyTexts[b.getAttribute("data-copy")]||"",function(ok){
+      b.innerHTML=ok?'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>':'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+      b.title=ok?"Disalin!":"Gagal menyalin"; b.setAttribute("aria-label",b.title);
+      setTimeout(function(){ b.innerHTML=html; b.title=t0; b.setAttribute("aria-label",t0); b.disabled=false; },1600);
+    });
+  }); });
+
   function renderSummary(per,has,students,extra){
     var yearTot=0, cards="";
     WEEKLY.forEach(function(w){
@@ -775,6 +797,35 @@ details.full>summary{cursor:pointer;font-weight:700;padding:12px 16px;background
       return '<td class="num">'+(has[w.s]?'RM '+money(colTot[w.s]):'–')+' <span class="muted" style="font-size:.78rem">('+count[w.s]+')</span></td>';
     }).join("")+'<td class="num mt">RM '+money(yearTot-extra)+'</td></tr></tbody>';
     $("sumTable").innerHTML=t;
+
+    // plain-text version for "Salin ke papan klip"
+    var L=["Yuran mengikut bulan "+Y+" (seorang pelajar)", students+" pelajar sekelas · tiada kelas pada cuti umum & cuti sekolah", ""];
+    for(var mm=0;mm<12;mm++){
+      var tm=0;
+      WEEKLY.forEach(function(w){ tm+=per[w.s]*monthCount[mm][w.s]; });
+      L.push(BULAN[mm]+": RM "+money(tm));
+    }
+    L.push("", "Jumlah setahun: RM "+money(yearTot-extra));
+    if(extra) L.push("Kos lain: RM "+money(extra), "Jumlah keseluruhan: RM "+money(yearTot));
+    if(estList.length) L.push("", "* anggaran — harga "+estList.join(" & ")+" belum diketahui");
+    copyTexts.month=L.join("\n");
+
+    // plain-text version of "Tetapan jadual"
+    var FQ={week:"setiap minggu",alt0:"selang seminggu (A)",alt1:"selang seminggu (B)",month:"sebulan sekali"};
+    var E=["Jadual tuisyen "+Y,""];
+    WEEKLY.forEach(function(w){
+      var hrs=w.hrs!=null?w.hrs:(w.est?w.est.hrs:null), hEst=w.hrs==null&&hrs!=null;
+      var x=String(w.time).split(":"), endM=hrs!=null?(+x[0])*60+(+x[1]||0)+Math.round(hrs*60):null;
+      var end=endM!=null?String(Math.floor(endM/60)%24).padStart(2,"0")+":"+String(endM%60).padStart(2,"0"):null;
+      var fee=has[w.s]?per[w.s]*students:null;
+      E.push(w.s+(w.teacher?" ("+w.teacher+")":""));
+      E.push("  "+HARIP[w.day]+", "+fmtTime(w.time)+(end?" – "+fmtTime(end):"")+" · "+FQ[w.freq==="alt"?"alt"+w.off:w.freq]);
+      E.push("  "+(hrs!=null?hrs+" jam sekelas"+(hEst?" *anggaran":""):"jam belum diisi")+" · "+
+        (fee!=null?"RM "+money(fee)+" sekelas"+(hrs?" (RM "+money(fee/hrs)+"/jam)":"")+(src[w.s]==="est"?" *anggaran":""):"yuran belum diisi")+
+        " · "+count[w.s]+" kelas setahun");
+    });
+    if(estList.length) E.push("","* anggaran — harga "+estList.join(" & ")+" belum diketahui");
+    copyTexts.ed=E.join("\n");
 
     // cancellation impact per subject
     var cx={};
