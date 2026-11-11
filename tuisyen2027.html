@@ -143,6 +143,10 @@ section.sub.closed>.sub-head{margin-bottom:0}
 .admin-bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:0 0 16px;padding:10px 14px;border:2px dashed var(--accent);border-radius:10px;font-size:.9rem}
 .admin-bar b{margin-right:auto}
 .admin-bar .st{width:100%;font-size:.82rem;color:var(--muted)}
+.admin-bar .st.ok{color:var(--study-ink)}
+.admin-bar .st.bad{color:var(--ph);font-weight:600}
+.admin-bar .toggle.primary{background:var(--accent);color:var(--surface);border-color:var(--accent)}
+.admin-bar .toggle:disabled{opacity:.55;cursor:default}
 body:not(.is-admin) .admin-only{display:none}
 body.is-admin .public-only{display:none}
 @media print{ .admin-bar{display:none} }
@@ -245,7 +249,8 @@ details.full>summary{cursor:pointer;font-weight:700;padding:12px 16px;background
 
   <div class="admin-bar admin-only" id="adminBar">
     <b>Mod admin</b>
-    <button type="button" class="toggle no-arrow" id="adExport">Eksport settings.js</button>
+    <button type="button" class="toggle no-arrow primary" id="adPublish">Terbit</button>
+    <button type="button" class="toggle no-arrow" id="adExport" title="Sandaran: muat turun settings.js untuk di-commit secara manual">Eksport</button>
     <button type="button" class="toggle no-arrow" id="adDiscard">Buang draf</button>
     <span class="st" id="adStatus"></span>
   </div>
@@ -762,13 +767,37 @@ details.full>summary{cursor:pointer;font-weight:700;padding:12px 16px;background
   function exportObj(){
     var c=clone(store); return {schedule:schedObj(), cost:c};
   }
+  var pubMsg=null;   // mesej selepas Terbit — kekal sehingga draf berubah lagi
   function adminStatus(){
     if(!ADMIN) return;
-    var same=JSON.stringify(exportObj())===JSON.stringify({schedule:OFFICIAL.schedule||null,cost:OFFICIAL.cost||null});
-    $("adStatus").textContent=same?"Draf sama dengan data rasmi (settings.js) — tiada perubahan untuk diterbitkan.":
-      "Draf berbeza daripada data rasmi. Eksport settings.js dan commit ke GitHub supaya orang awam nampak perubahan ini.";
+    var cur=JSON.stringify(exportObj());
+    if(pubMsg&&pubMsg.snap===cur){ setStatus(pubMsg.html,pubMsg.cls); return; }
+    pubMsg=null;
+    var same=cur===JSON.stringify({schedule:OFFICIAL.schedule||null,cost:OFFICIAL.cost||null});
+    setStatus(same?"Draf sama dengan data rasmi — tiada perubahan untuk diterbitkan.":
+      "Draf berbeza daripada data rasmi. Tekan <b>Terbit</b> supaya orang awam nampak perubahan ini.","");
   }
+  function setStatus(html,cls){ var s=$("adStatus"); s.innerHTML=html; s.className="st"+(cls?" "+cls:""); }
   if(ADMIN){
+    var adminPw=null;   // disimpan dalam memori halaman ini sahaja
+    $("adPublish").addEventListener("click",function(){
+      var b=this;
+      if(!adminPw){ adminPw=prompt("Kata laluan admin:"); if(!adminPw){ adminPw=null; return; } }
+      var data=exportObj(), snap=JSON.stringify(data);
+      b.disabled=true; setStatus("Menerbitkan…","");
+      fetch("/api/publish",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({password:adminPw,settings:data})})
+        .then(function(r){ return r.json().catch(function(){ return {ok:false,error:"Respons pelayan tidak sah ("+r.status+")"}; }).then(function(j){ j.status=r.status; return j; }); })
+        .then(function(j){
+          if(j.status===401) adminPw=null;
+          if(!j.ok){ setStatus("Gagal menerbitkan: "+esc(j.error||"ralat"),"bad"); return; }
+          OFFICIAL={schedule:data.schedule,cost:data.cost};
+          pubMsg={snap:snap,cls:"ok",html:j.unchanged?"Tiada perubahan — data rasmi sudah sama.":
+            "Diterbitkan ✓ Laman awam dikemas kini dalam kira-kira 1 minit"+(j.url?' · <a href="'+esc(j.url)+'" target="_blank" rel="noopener">lihat commit</a>':"")+"."};
+          adminStatus();
+        })
+        .catch(function(){ setStatus("Gagal menerbitkan: tiada sambungan ke pelayan. (Terbit hanya berfungsi di laman Vercel, bukan fail tempatan.)","bad"); })
+        .then(function(){ b.disabled=false; });
+    });
     $("adExport").addEventListener("click",function(){
       var txt="// Data rasmi tuisyen "+Y+" — dijana oleh mod admin pada "+new Date().toISOString().slice(0,16).replace("T"," ")+"\n"+
               "window.TUISYEN_SETTINGS = "+JSON.stringify(exportObj(),null,2)+";\n";
