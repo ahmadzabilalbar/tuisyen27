@@ -207,7 +207,7 @@ tr.tot td{border-top:2px solid var(--line)}
   for(var e=0;e<new Date(Y,M,1).getDay();e++) g+='<div class="pad"></div>';
   for(var d=1;d<=31;d++){
     var dow=new Date(Y,M,d).getDay(), css, body;
-    if(d>LAST_SCHOOL){css="b";body="Cuti";}
+    if(d>LAST_SCHOOL){css="b";body="Cuti Sekolah";}
     else if(WEEKEND.indexOf(dow)>=0){css="r";body="Hujung minggu";}
     else {css="s";body="Sekolah";}
     body='<span class="t">'+body+'</span>';
