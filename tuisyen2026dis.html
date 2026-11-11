@@ -75,6 +75,8 @@ section h2{margin:0 0 12px;font-size:1.1rem}
 .cell.k .t{font-weight:700}
 .cell.b{background:var(--break);color:var(--break-ink)}
 .cell.ph{background:var(--ph);color:var(--ph-ink)}
+.cell.k.pp{background:transparent;box-shadow:inset 0 0 0 2px var(--study-ink);border:0;opacity:.85}
+.cell.k.pp .t{text-decoration:line-through}
 .cell.k.hol{box-shadow:inset 0 0 0 3px var(--ph)}
 .cell.r{background:var(--weekend);color:var(--weekend-ink)}
 .cell.today{outline:2px solid var(--today);outline-offset:1px}
@@ -123,7 +125,7 @@ tr.tot td{border-top:2px solid var(--line)}
   </header>
   <section>
     <p class="muted" style="margin:0 0 12px">Sekolah akhir: Khamis 3 Dis · Cuti akhir persekolahan: 4–31 Dis · Semua kelas online</p>
-    <p style="margin:0 0 12px"><b>Matematik Tambahan</b> — Cikgu Wan Suhaimi · 9.00 – 10.30 pg · satu sesi sehari · 1 jam 30 min sekelas<br><b>Kimia</b> — Sir Thana · Sabtu 11.30 pg – 1.00 ptg · 1 jam 30 min sekelas</p>
+    <p style="margin:0 0 12px"><b>Matematik Tambahan</b> — Cikgu Wan Suhaimi · 9.00 – 10.30 pg · satu sesi sehari · 1 jam 30 min sekelas<br><b>Kimia</b> — Sir Thana · Sabtu 11.30 pg – 1.00 ptg · 1 jam 30 min sekelas<br><b>Kelas Kimia 5 Dis ditangguhkan</b> (10 pelajar menyertai Young Professional Program) — tarikh baharu akan dimaklumkan</p>
     <div class="legend">
       <span><i class="sw" style="background:var(--school)"></i>Sekolah</span>
       <span><i class="sw" style="background:var(--study)"></i>Kelas tuisyen</span>
@@ -140,7 +142,7 @@ tr.tot td{border-top:2px solid var(--line)}
     </div>
   </section>
   <section class="students">
-    <h2>Senarai pelajar (21 orang)</h2>
+    <h2>Senarai pelajar (25 orang)</h2>
     <ol>
       <li>Abdul Mu'izz</li>
       <li>Abdul Mustaqim Uzair</li>
@@ -163,6 +165,10 @@ tr.tot td{border-top:2px solid var(--line)}
       <li>Mus'ab</li>
       <li>Nik Ameen Ziqri</li>
       <li>Syed Hadif Wafiy</li>
+      <li>Muhammad Hadif Arman</li>
+      <li>Muhammad Umar Yaasin</li>
+      <li>Nur Muhammad Iman</li>
+      <li>Akif Fahimi</li>
     </ol>
   </section>
 </div>
@@ -175,6 +181,8 @@ tr.tot td{border-top:2px solid var(--line)}
   var FEST={25:"Krismas"};
   // Kelas tuisyen: hari: ["Subjek", ...]
   var CLASSES={5:["Kimia"],7:["Matematik Tambahan"],8:["Matematik Tambahan"],12:["Kimia"],14:["Matematik Tambahan"],15:["Matematik Tambahan"],19:["Kimia"],26:["Kimia"]};
+  // Kelas ditangguhkan (masih dikira dalam yuran): hari: "sebab"
+  var POSTPONED={5:"Young Professional Program"};
   var SHORT={"Matematik Tambahan":"Add Math","Kimia":"Kimia"};
   var TIME={"Matematik Tambahan":"9.00 – 10.30 pg","Kimia":"11.30 pg – 1.00 ptg"};
   var TEACHER={"Matematik Tambahan":"Cikgu Wan Suhaimi","Kimia":"Sir Thana"};
@@ -213,6 +221,11 @@ tr.tot td{border-top:2px solid var(--line)}
     if(CLASSES[d]){
       css="k";
       body=CLASSES[d].map(function(x){ if(!subj[x]){subj[x]=0;order.push(x);} subj[x]++; return '<span class="t full">'+esc(x)+'</span><span class="short">'+esc(SHORT[x]||x)+'</span>'+(TEACHER[x]?'<span class="f">'+esc(TEACHER[x])+'</span>':'')+(TIME[x]?'<span class="f">'+esc(TIME[x])+'</span>':''); }).join("");
+      if(POSTPONED[d]){
+        css="k pp";
+        body=CLASSES[d].map(function(x){ return '<span class="t full">'+esc(x)+'</span><span class="short">'+esc(SHORT[x]||x)+'<br>Tunda</span>'; }).join("")+
+             '<span class="f">Ditangguhkan</span><span class="f">'+esc(POSTPONED[d])+'</span><span class="f">Tarikh baharu akan dimaklumkan</span>';
+      }
     }
     if(FEST[d]){ css=css==="k"?"k hol":"ph"; if(css==="ph") body='<span class="t lbl">Cuti Umum</span>'; body+='<span class="f">'+esc(FEST[d])+'</span>'; }
     g+='<div class="cell '+css+(isToday(d)?" today":"")+'"><span class="n">'+d+' <span class="dw">'+HARI[dow]+'</span></span>'+body+'</div>';
