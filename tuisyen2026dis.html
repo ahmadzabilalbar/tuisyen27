@@ -132,12 +132,9 @@ tr.tot td{border-top:2px solid var(--line)}
 
     <div class="cost">
       <h3>Anggaran yuran tuisyen Disember 2026 (seorang pelajar)</h3>
-      <div class="cost-in">
-        <label>Bilangan pelajar <input type="number" id="students" min="1" step="1"></label>
-        <label>Kos lain (buku, daftar) RM <input type="number" id="extra" min="0" step="1" value="0"></label>
-      </div>
+      <div class="cost-in">Bilangan pelajar: <b id="students"></b></div>
       <div class="tbl-wrap"><table id="costTable"></table></div>
-      <p class="muted" style="font-size:.82rem;margin:8px 0 0">Yuran seorang sekelas = yuran kelas ÷ bilangan pelajar. Matematik Tambahan RM100 sesi (90 min), dibahagi bilangan pelajar. Kimia RM50 seorang untuk 4 kelas. Bilangan pelajar asal ikut senarai pelajar di bawah. Nilai yang ditukar disimpan dalam pelayar ini.</p>
+      <p class="muted" style="font-size:.82rem;margin:8px 0 0">Yuran seorang sekelas = yuran kelas ÷ bilangan pelajar. Matematik Tambahan RM100 sesi (90 min), dibahagi bilangan pelajar. Kimia RM50 seorang untuk 4 kelas. Bilangan pelajar ikut senarai pelajar di bawah.</p>
     </div>
   </section>
   <section class="students">
@@ -181,7 +178,6 @@ tr.tot td{border-top:2px solid var(--line)}
   // Yuran asal: mode class = RM sekelas, hour = RM sejam, month = RM seorang sebulan; hrs = jam sekelas
   var FEES={"Matematik Tambahan":{mode:"class",val:100,hrs:1.5},"Kimia":{mode:"month",val:50,hrs:1.5}};
   var HARI=["Ahd","Isn","Sel","Rab","Kha","Jum","Sab"];
-  var KEY="tuisyen-dis-2026-v6";
 
   function $(id){return document.getElementById(id);}
   function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
@@ -220,68 +216,31 @@ tr.tot td{border-top:2px solid var(--line)}
   }
   $("grid").innerHTML=g;
 
-  // cost (kaedah sama seperti 2027: yuran kelas dibahagi bilangan pelajar)
-  var DEF_STUDENTS=document.querySelectorAll(".students li").length||1;
-  var store=null;
-  try{ store=JSON.parse(localStorage.getItem(KEY)||"null"); }catch(err){}
-  store=store||{}; store.mode=store.mode||{}; store.val=store.val||{};
-  $("students").value=store.students!=null?store.students:DEF_STUDENTS;
-  if(store.extra!=null) $("extra").value=store.extra;
-  // tukar nilai antara mod supaya yuran sekelas kekal (n = bilangan kelas, st = bilangan pelajar)
-  function toClass(v,mode,h,n,st){ return v==null?null:mode==="hour"?(h?v*h:null):mode==="month"?v*st/n:v; }
-  function fromClass(c,mode,h,n,st){ return c==null?null:+(mode==="hour"?(h?c/h:null):mode==="month"?c*n/st:c).toFixed(2); }
-  function defMode(nm){ return FEES[nm]?FEES[nm].mode:"class"; }
-  function hrsOf(nm){ return FEES[nm]?FEES[nm].hrs:null; }
-
+  // cost (kaedah sama seperti 2027: yuran kelas dibahagi bilangan pelajar) — paparan sahaja
+  var students=document.querySelectorAll(".students li").length||1;
+  $("students").textContent=students;
+  var MODE_LABEL={"class":"Sekelas","hour":"Sejam","month":"Seorang sebulan"};
+  var UNIT={"class":"RM/kelas","hour":"RM/jam","month":"RM/pelajar"};
   var ch='<thead><tr><th>Subjek</th><th class="num">Kelas</th><th class="num">Jam</th><th>Caj</th><th class="num">Kadar (RM)</th>'+
          '<th class="num">Yuran sekelas (RM)</th><th class="num">Seorang sekelas (RM)</th><th class="num">Seorang sejam (RM)</th><th class="num">Jumlah seorang (RM)</th></tr></thead><tbody>';
-  order.forEach(function(nm,i){
-    var mode=store.mode[nm]||defMode(nm), h=hrsOf(nm);
-    var val=store.val[nm]&&store.val[nm][mode]!=null?store.val[nm][mode]:(FEES[nm]&&FEES[nm].mode===mode?FEES[nm].val:null);
+  var tot=0, td=0;
+  order.forEach(function(nm){
+    var f=FEES[nm], n=subj[nm], h=f?f.hrs:null;
+    var fee=!f?null:f.mode==="hour"?f.val*h:f.mode==="month"?f.val*students/n:f.val;   // yuran sekelas
+    var per=fee==null?null:fee/students;
+    if(per!=null) tot+=per*n; td+=n;
     ch+='<tr><td>'+esc(nm)+(TEACHER[nm]?'<div class="muted" style="font-size:.82rem">'+esc(TEACHER[nm])+'</div>':'')+(TIME[nm]?'<div class="muted" style="font-size:.82rem">'+esc(TIME[nm])+'</div>':'')+'</td>'+
-        '<td class="num">'+subj[nm]+'</td>'+
-        '<td class="num">'+(h!=null?subj[nm]*h+'<br><span class="muted" style="font-size:.8rem">'+h+' jam/kelas</span>':'–')+'</td>'+
-        '<td><select data-m="'+i+'"><option value="class"'+(mode==="class"?" selected":"")+'>Sekelas</option><option value="hour"'+(mode==="hour"?" selected":"")+'>Sejam</option><option value="month"'+(mode==="month"?" selected":"")+'>Seorang sebulan</option></select></td>'+
-        '<td class="num"><input type="number" min="0" step="any" data-f="'+i+'" value="'+(val!=null?val:"")+'" placeholder="?"><br><span class="muted" style="font-size:.75rem" data-u="'+i+'"></span></td>'+
-        '<td class="num" data-c="'+i+'"></td><td class="num" data-p="'+i+'"></td><td class="num" data-ph="'+i+'"></td><td class="num" data-s="'+i+'"></td></tr>';
+        '<td class="num">'+n+'</td>'+
+        '<td class="num">'+(h!=null?n*h+'<br><span class="muted" style="font-size:.8rem">'+h+' jam/kelas</span>':'–')+'</td>'+
+        '<td>'+(f?MODE_LABEL[f.mode]:'–')+'</td>'+
+        '<td class="num">'+(f?money(f.val)+'<br><span class="muted" style="font-size:.75rem">'+UNIT[f.mode]+'</span>':'–')+'</td>'+
+        '<td class="num">'+(fee==null?'–':money(fee))+'</td>'+
+        '<td class="num">'+(per==null?'–':money(per))+'</td>'+
+        '<td class="num">'+(per==null||!h?'–':money(per/h))+'</td>'+
+        '<td class="num">'+(per==null?'–':money(per*n))+'</td></tr>';
   });
-  ch+='<tr><td>Kos lain</td><td colspan="7"></td><td class="num" id="cExtra"></td></tr>';
-  ch+='<tr class="tot"><td>Jumlah Disember</td><td class="num" id="cDays"></td><td colspan="6"></td><td class="num" id="cTotal"></td></tr></tbody>';
-  var ct=$("costTable"); ct.innerHTML=ch;
-
-  function calc(ev){
-    var students=Math.max(1,parseFloat($("students").value)||DEF_STUDENTS);
-    var extra=Math.max(0,parseFloat($("extra").value)||0);
-    var tot=0, td=0;
-    order.forEach(function(nm,i){
-      var inp=ct.querySelector('[data-f="'+i+'"]'), mode=ct.querySelector('[data-m="'+i+'"]').value;
-      var h=hrsOf(nm), n=subj[nm], prev=store.mode[nm]||defMode(nm);
-      store.val[nm]=store.val[nm]||{};
-      if(mode!==prev){   // tukar mod: tukar nilai supaya yuran sekelas kekal
-        var old=inp.value===""?null:parseFloat(inp.value);
-        var nv=fromClass(toClass(old,prev,h,n,students),mode,h,n,students);
-        inp.value=nv!=null?nv:""; store.mode[nm]=mode;
-      }
-      var val=inp.value===""?null:Math.max(0,parseFloat(inp.value)||0);
-      store.val[nm][mode]=val;
-      ct.querySelector('[data-u="'+i+'"]').textContent=mode==="hour"?"RM/jam":mode==="month"?"RM/pelajar":"RM/kelas";
-      var fee=toClass(val,mode,h,n,students);
-      var per=fee==null?0:fee/students, sub=per*subj[nm];
-      tot+=sub; td+=subj[nm];
-      ct.querySelector('[data-c="'+i+'"]').textContent=fee==null?"–":money(fee);
-      ct.querySelector('[data-p="'+i+'"]').textContent=fee==null?"–":money(per);
-      ct.querySelector('[data-ph="'+i+'"]').textContent=fee==null||!h?"–":money(per/h);
-      ct.querySelector('[data-s="'+i+'"]').textContent=fee==null?"isi yuran":money(sub);
-    });
-    $("cExtra").textContent=money(extra);
-    $("cDays").textContent=td;
-    $("cTotal").textContent="RM "+money(tot+extra);
-    store.students=students===DEF_STUDENTS?null:students; store.extra=extra;
-    lsSet(KEY,JSON.stringify(store));
-  }
-  document.querySelector(".cost").addEventListener("input",calc);
-  document.querySelector(".cost").addEventListener("change",calc);
-  calc();
+  ch+='<tr class="tot"><td>Jumlah Disember</td><td class="num">'+td+'</td><td colspan="6"></td><td class="num">RM '+money(tot)+'</td></tr></tbody>';
+  $("costTable").innerHTML=ch;
 })();
 </script>
 </body>
