@@ -378,6 +378,13 @@ details.full>summary{cursor:pointer;font-weight:700;padding:12px 16px;background
     </section>
 
     <section>
+      <h2>Hari terbaik untuk kelas</h2>
+      <p class="muted" style="margin:0 0 10px;font-size:.85rem">Berapa kelas yang benar-benar diadakan pada 2027 jika kelas dibuat pada hari tersebut (tiada kelas pada cuti umum, cuti tambahan KPM &amp; cuti sekolah). Lebih tinggi = kurang batal.</p>
+      <div class="tbl-wrap"><table id="bestDayTable"></table></div>
+      <ul class="notes" id="bestDayNotes"></ul>
+    </section>
+
+    <section>
       <h2>Kalendar bulanan</h2>
       <div class="legend">
         <span><i class="sw" style="background:var(--school)"></i>Hari sekolah</span>
@@ -614,6 +621,40 @@ details.full>summary{cursor:pointer;font-weight:700;padding:12px 16px;background
     ht+='<tr><td>'+F(k)+'</td><td>'+HARI[d.getDay()]+'</td><td>'+esc(names.join(" · "))+'</td><td>'+kinds.join(" ")+'</td></tr>';
   });
   $("holTable").innerHTML=ht+'</tbody>';
+
+  // best day for classes — count classes held per weekday & frequency
+  (function(){
+    var HP=["Ahad","Isnin","Selasa","Rabu","Khamis","Jumaat","Sabtu"];
+    var st=[]; for(var i=0;i<7;i++) st.push({w:[0,0],a:[0,0],b:[0,0],m:[0,0],ph:[],brk:0});
+    var nth={}, seenM={};
+    for(var d=new Date(Y,0,1); d.getFullYear()===Y; d.setDate(d.getDate()+1)){
+      var wd=d.getDay(), k=K(d), o=st[wd]; nth[wd]=(nth[wd]==null?0:nth[wd]+1);
+      var brk=!!inBreak(d)||d<P(G.start), hol=!brk&&!!(PH[k]||KPM[k]), ok=!hol&&!brk;
+      if(hol) o.ph.push(F(k)+(PH[k]?"":"*")); if(brk) o.brk++;
+      function add(c){c[0]++; if(ok) c[1]++;}
+      add(o.w); add(nth[wd]%2===0?o.a:o.b);
+      if(d.getDate()<=7) add(o.m);
+    }
+    var held=st.map(function(o){return o.w[1];}), mx=Math.max.apply(null,held), mn=Math.min.apply(null,held);
+    function c(x){return x[1]+'<span class="muted">/'+x[0]+'</span>';}
+    var h='<thead><tr><th>Hari</th><th>Cuti umum / KPM (hari sekolah)</th><th class="num">Cuti sekolah</th><th class="num">Setiap minggu</th><th class="num">Selang (A)</th><th class="num">Selang (B)</th><th class="num">Sebulan sekali</th><th>Penilaian</th></tr></thead><tbody>';
+    [1,2,3,4,5,6,0].forEach(function(i){
+      var o=st[i], r=held[i]===mx?'<span class="pill s">Terbaik</span>':held[i]===mn?'<span class="pill ph">Elak</span>':'';
+      h+='<tr'+(held[i]===mx?' class="tot"':'')+'><td>'+HP[i]+'</td><td>'+o.ph.length+(o.ph.length?' <span class="muted" style="font-size:.8rem">('+o.ph.join(", ")+')</span>':'')+'</td><td class="num">'+o.brk+'</td>'+
+         '<td class="num">'+c(o.w)+'</td><td class="num">'+c(o.a)+'</td><td class="num">'+c(o.b)+'</td><td class="num">'+c(o.m)+'</td><td>'+r+'</td></tr>';
+    });
+    $("bestDayTable").innerHTML=h+'</tbody>';
+    $("bestDayNotes").innerHTML=[
+      'Nombor = kelas diadakan / kelas dijadualkan. * = cuti tambahan KPM. Selang (A) = minggu 1, 3, 5… · (B) = minggu 2, 4, 6…',
+      '<b>Selasa malam</b> paling sedikit batal untuk kelas mingguan — sesuai untuk subjek kritikal (Matematik Tambahan).',
+      '<b>Isnin malam, selang (A)</b> hanya terkena 1 cuti — sesuai untuk Fizik tanpa bertembung dengan Selasa.',
+      '<b>Elak Ahad</b>: cuti ganti di Kedah jatuh pada Ahad, jadi paling banyak kelas batal.',
+      'Jumaat & Sabtu hampir tiada cuti umum tetapi semua cuti sekolah '+Y+' bermula hari Jumaat. Jika kelas online diteruskan semasa cuti sekolah, <b>Jumaat malam</b> jadi pilihan terbaik (tiada sekolah esoknya).',
+      'Kelas sebulan sekali: elakkan hujung minggu (Jumaat/Sabtu/Ahad) — minggu pertama bulan kerap jatuh dalam cuti.',
+      'Masa: 9:00 malam selepas Isyak (Kedah ~8:35–8:50 malam). Elak Khamis malam — malam hujung minggu, keluarga kerap balik kampung.',
+      'Tarikh cuti Islam ialah anggaran (±1 hari), tetapi kedudukan hari tidak berubah.'
+    ].map(function(t){return '<li>'+t+'</li>';}).join("");
+  })();
 
   // monthly calendars
   function renderMini(){
